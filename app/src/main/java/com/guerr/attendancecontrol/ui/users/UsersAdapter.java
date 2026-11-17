@@ -20,6 +20,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
     public interface OnUserActionListener {
         void onDeactivateUser(UserManagementDTO user);
+        void onEditUser(UserManagementDTO user);
     }
 
     private final List<UserManagementDTO> items = new ArrayList<>();
@@ -70,24 +71,28 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
 
             boolean isActive = user.isActive();
             if (isActive) {
-                binding.tvUserStatusBadge.setText("ACTIVO");
-                binding.tvUserStatusBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.status_present_bg));
+                binding.tvUserStatusBadge.setText("Activo");
                 binding.tvUserStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_present_text));
 
                 binding.btnToggleStatus.setVisibility(View.VISIBLE);
-                binding.btnToggleStatus.setText("Desactivar");
+                binding.btnToggleStatus.setText("Eliminar");
                 binding.btnToggleStatus.setOnClickListener(v -> {
                     if (listener != null) {
                         listener.onDeactivateUser(user);
                     }
                 });
             } else {
-                binding.tvUserStatusBadge.setText("INACTIVO");
-                binding.tvUserStatusBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.status_absent_bg));
-                binding.tvUserStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_absent_text));
+                binding.tvUserStatusBadge.setText("Inactivo");
+                binding.tvUserStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.text_secondary));
 
                 binding.btnToggleStatus.setVisibility(View.GONE);
             }
+
+            binding.btnEditUser.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onEditUser(user);
+                }
+            });
         }
     }
 }

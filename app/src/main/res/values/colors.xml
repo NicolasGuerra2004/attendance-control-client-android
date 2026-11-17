@@ -3,45 +3,50 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     
-    <!-- QuimiControl Emerald Brand Palette -->
-    <color name="primary">#059669</color>
-    <color name="primary_dark">#047857</color>
-    <color name="primary_variant">#10B981</color>
-    <color name="primary_light">#ECFDF5</color>
-    <color name="primary_border">#A7F3D0</color>
-    <color name="accent">#10B981</color>
+    <!-- QuimiControl Brand Palette (Design Figma: #0F766E) -->
+    <color name="primary">#0F766E</color>
+    <color name="primary_dark">#0D5D57</color>
+    <color name="primary_variant">#14B8A6</color>
+    <color name="primary_light">#CCFBF1</color>
+    <color name="primary_border">#99F6E4</color>
+    <color name="accent">#0F766E</color>
     
     <!-- Backgrounds & Slate Neutral -->
     <color name="bg_screen">#F8FAFC</color>
     <color name="card_surface">#FFFFFF</color>
     <color name="text_primary">#0F172A</color>
     <color name="text_secondary">#64748B</color>
+    <color name="text_dark_label">#475569</color>
     <color name="text_muted">#94A3B8</color>
     <color name="border_color">#E2E8F0</color>
+    <color name="border_input">#CBD5E1</color>
     <color name="tab_bg">#F1F5F9</color>
 
-    <!-- Status Badges (Match Web) -->
-    <color name="status_present_bg">#ECFDF5</color>
+    <!-- Status Badges & Accents -->
+    <color name="status_present_bg">#D1FAE5</color>
     <color name="status_present_text">#047857</color>
     <color name="status_present_border">#A7F3D0</color>
     
     <color name="status_late_bg">#FEF3C7</color>
-    <color name="status_late_text">#B45309</color>
+    <color name="status_late_text">#92400E</color>
     <color name="status_late_border">#FDE68A</color>
     
     <color name="status_early_bg">#FFEDD5</color>
     <color name="status_early_text">#C2410C</color>
     <color name="status_early_border">#FED7AA</color>
     
-    <color name="status_absent_bg">#FFE4E6</color>
-    <color name="status_absent_text">#BE123C</color>
+    <color name="status_absent_bg">#FEF2F2</color>
+    <color name="status_absent_text">#B91C1C</color>
     <color name="status_absent_border">#FECDD3</color>
     
     <!-- Action Buttons -->
     <color name="btn_checkin">#059669</color>
     <color name="btn_checkin_pressed">#047857</color>
-    <color name="btn_checkout">#E11D48</color>
-    <color name="btn_checkout_pressed">#BE123C</color>
+    <color name="btn_checkout">#EF4444</color>
+    <color name="btn_checkout_pressed">#DC2626</color>
+    <color name="btn_edit_bg">#F1F5F9</color>
+    <color name="btn_delete_bg">#FEF2F2</color>
+    <color name="btn_delete_text">#B91C1C</color>
     <color name="btn_disabled_bg">#E2E8F0</color>
     <color name="btn_disabled_text">#94A3B8</color>
 </resources>

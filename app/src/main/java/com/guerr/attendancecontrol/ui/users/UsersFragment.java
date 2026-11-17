@@ -41,12 +41,23 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        adapter = new UsersAdapter(this::confirmDeactivateUser);
+        adapter = new UsersAdapter(new UsersAdapter.OnUserActionListener() {
+            @Override
+            public void onDeactivateUser(UserManagementDTO user) {
+                confirmDeactivateUser(user);
+            }
+
+            @Override
+            public void onEditUser(UserManagementDTO user) {
+                showEditUserDialog(user);
+            }
+        });
+
         binding.rvUsers.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvUsers.setAdapter(adapter);
 
         binding.btnRefreshUsers.setOnClickListener(v -> loadUsers());
-        binding.fabAddUser.setOnClickListener(v -> showAddUserDialog());
+        binding.btnAddNewUser.setOnClickListener(v -> showAddUserDialog());
 
         loadUsers();
     }
@@ -83,9 +94,9 @@ public class UsersFragment extends Fragment {
 
     private void confirmDeactivateUser(UserManagementDTO user) {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Confirmar desactivación")
+                .setTitle("Confirmar eliminación")
                 .setMessage("¿Deseas dar de baja a " + user.getFullName() + "?")
-                .setPositiveButton("Desactivar", (dialog, which) -> deactivateUser(user))
+                .setPositiveButton("Eliminar", (dialog, which) -> deactivateUser(user))
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
@@ -96,7 +107,7 @@ public class UsersFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(), "Usuario " + user.getFullName() + " desactivado correctamente", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Usuario " + user.getFullName() + " dado de baja", Toast.LENGTH_SHORT).show();
                     loadUsers();
                 } else {
                     Toast.makeText(requireContext(), "Error al desactivar (" + response.code() + ")", Toast.LENGTH_SHORT).show();
@@ -113,28 +124,71 @@ public class UsersFragment extends Fragment {
     private void showAddUserDialog() {
         DialogAddUserBinding dialogBinding = DialogAddUserBinding.inflate(getLayoutInflater());
 
-        new AlertDialog.Builder(requireContext())
-                .setTitle("Registrar Nuevo Usuario")
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(dialogBinding.getRoot())
-                .setPositiveButton("Crear", (dialog, which) -> {
-                    String rut = dialogBinding.etRut.getText() != null ? dialogBinding.etRut.getText().toString().trim() : "";
-                    String name = dialogBinding.etName.getText() != null ? dialogBinding.etName.getText().toString().trim() : "";
-                    String lastName = dialogBinding.etLastName.getText() != null ? dialogBinding.etLastName.getText().toString().trim() : "";
-                    String email = dialogBinding.etEmail.getText() != null ? dialogBinding.etEmail.getText().toString().trim() : "";
-                    String phone = dialogBinding.etPhone.getText() != null ? dialogBinding.etPhone.getText().toString().trim() : "";
-                    String address = dialogBinding.etAddress.getText() != null ? dialogBinding.etAddress.getText().toString().trim() : "";
-                    String password = dialogBinding.etPassword.getText() != null ? dialogBinding.etPassword.getText().toString().trim() : "";
+                .create();
 
-                    if (rut.isEmpty() || name.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                        Toast.makeText(requireContext(), "Por favor completa los campos obligatorios", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
 
-                    UserCreateDTO newUser = new UserCreateDTO(rut, name, lastName, phone, address, email, password);
-                    createUser(newUser);
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
+        dialogBinding.btnCreateUser.setOnClickListener(v -> {
+            String rut = dialogBinding.etRut.getText() != null ? dialogBinding.etRut.getText().toString().trim() : "";
+            String name = dialogBinding.etName.getText() != null ? dialogBinding.etName.getText().toString().trim() : "";
+            String lastName = dialogBinding.etLastName.getText() != null ? dialogBinding.etLastName.getText().toString().trim() : "";
+            String email = dialogBinding.etEmail.getText() != null ? dialogBinding.etEmail.getText().toString().trim() : "";
+            String phone = dialogBinding.etPhone.getText() != null ? dialogBinding.etPhone.getText().toString().trim() : "";
+            String address = dialogBinding.etAddress.getText() != null ? dialogBinding.etAddress.getText().toString().trim() : "";
+            String password = dialogBinding.etPassword.getText() != null ? dialogBinding.etPassword.getText().toString().trim() : "";
+
+            if (rut.isEmpty() || name.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(requireContext(), "Por favor completa los campos obligatorios (*)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            UserCreateDTO newUser = new UserCreateDTO(rut, name, lastName, phone, address, email, password);
+            createUser(newUser);
+            dialog.dismiss();
+        });
+
+        dialogBinding.btnCancelUser.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void showEditUserDialog(UserManagementDTO user) {
+        DialogAddUserBinding dialogBinding = DialogAddUserBinding.inflate(getLayoutInflater());
+        dialogBinding.tvDialogTitle.setText("Editar Usuario");
+        dialogBinding.tvDialogSubtitle.setText("Actualice los datos del colaborador");
+        dialogBinding.btnCreateUser.setText("Guardar Cambios");
+        dialogBinding.tilPassword.setVisibility(View.GONE);
+
+        String[] parts = user.getFullName() != null ? user.getFullName().split(" ", 2) : new String[]{"", ""};
+        dialogBinding.etName.setText(parts[0]);
+        if (parts.length > 1) {
+            dialogBinding.etLastName.setText(parts[1]);
+        }
+        dialogBinding.etEmail.setText(user.getEmail());
+        dialogBinding.etRut.setText("Q00" + user.getId());
+        dialogBinding.etRut.setEnabled(false);
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogBinding.getRoot())
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        dialogBinding.btnCreateUser.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Información guardada para " + user.getFullName(), Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+            loadUsers();
+        });
+
+        dialogBinding.btnCancelUser.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
     }
 
     private void createUser(UserCreateDTO newUser) {

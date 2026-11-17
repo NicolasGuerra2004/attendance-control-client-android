@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/bg_screen">
 
-    <!-- Fragment Container -->
+    <!-- Fragment Container (ocupa todo el espacio sobre la barra de navegación) -->
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
@@ -17,15 +17,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Bottom Navigation Bar (Visible only for Admin) -->
+    <!-- Bottom Navigation Bar (Figma: 80dp, White, Indicator pill #CCFBF1, Active Text #0F766E) -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/card_surface"
         app:elevation="8dp"
-        app:itemIconTint="@color/primary"
-        app:itemTextColor="@color/text_primary"
+        app:itemActiveIndicatorStyle="@style/Widget.Material3.BottomNavigationView.ActiveIndicator"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemRippleColor="@color/primary_light"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

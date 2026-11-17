@@ -14,6 +14,7 @@ import com.guerr.attendancecontrol.api.ApiClient;
 import com.guerr.attendancecontrol.api.ApiService;
 import com.guerr.attendancecontrol.data.model.DailyRecordDTO;
 import com.guerr.attendancecontrol.data.model.DashboardMetricsDTO;
+import com.guerr.attendancecontrol.data.session.SessionManager;
 import com.guerr.attendancecontrol.databinding.FragmentDashboardBinding;
 
 import java.util.List;
@@ -38,6 +39,15 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Mostrar nombre del administrador en sesión
+        SessionManager session = SessionManager.getInstance(requireContext());
+        String adminName = session.getFullName();
+        if (adminName != null && !adminName.isEmpty()) {
+            binding.tvAdminSessionName.setText(adminName);
+        } else {
+            binding.tvAdminSessionName.setText("Administrador Sistema");
+        }
+
         adapter = new TodayRecordAdapter();
         binding.rvTodayRecords.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.rvTodayRecords.setAdapter(adapter);
@@ -61,9 +71,22 @@ public class DashboardFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     DashboardMetricsDTO m = response.body();
-                    binding.tvPresentCount.setText(String.valueOf(m.getPresentToday()));
-                    binding.tvLateCount.setText(String.valueOf(m.getLateToday()));
-                    binding.tvAbsentCount.setText(String.valueOf(m.getAbsentToday()));
+                    int present = m.getPresentToday();
+                    int late = m.getLateToday();
+                    int absent = m.getAbsentToday();
+                    int total = present + late + absent;
+
+                    binding.tvTotalEmployeesCount.setText(String.valueOf(total));
+                    binding.tvPresentCount.setText(String.valueOf(present));
+                    binding.tvLateCount.setText(String.valueOf(late));
+                    binding.tvAbsentCount.setText(String.valueOf(absent));
+
+                    if (total > 0) {
+                        int pct = (present * 100) / total;
+                        binding.tvPresentPercentage.setText(pct + "% de asistencia");
+                    } else {
+                        binding.tvPresentPercentage.setText("Asistencia activa");
+                    }
                 }
             }
 

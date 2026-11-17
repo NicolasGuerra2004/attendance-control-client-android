@@ -29,15 +29,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Asegurar que las vistas no queden debajo de la barra de estado ni de la barra de gestos
+        // Manejo limpio de insets: barra de estado arriba y barra de navegación abajo
         ViewCompat.setOnApplyWindowInsetsListener(binding.main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            if (binding.bottomNavigation.getVisibility() == View.VISIBLE) {
-                binding.bottomNavigation.setPadding(0, 0, 0, systemBars.bottom);
-            } else {
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            }
+            binding.bottomNavigation.setPadding(0, 0, 0, systemBars.bottom);
             return insets;
         });
 

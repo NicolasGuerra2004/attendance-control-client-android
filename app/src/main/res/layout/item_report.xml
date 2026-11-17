@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="12dp"
     app:cardBackgroundColor="@color/card_surface"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="1dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
     app:strokeColor="@color/border_color"
     app:strokeWidth="1dp">
 
@@ -17,6 +17,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Top Row: Name and Duration/Status badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/text_primary"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Carlos Mendoza" />
 
@@ -37,38 +38,31 @@
                 android:id="@+id/tvReportBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/status_late_bg"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
                 android:textColor="@color/status_late_text"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:text="15 min tarde" />
+                tools:text="12 min tarde" />
         </LinearLayout>
 
-        <LinearLayout
+        <!-- RUT -->
+        <TextView
+            android:id="@+id/tvReportRut"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:layout_marginTop="4dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            tools:text="ID Usuario: Q002   ·   RUT: 12.345.678-9" />
 
-            <TextView
-                android:id="@+id/tvReportRut"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                tools:text="RUT: 12.345.678-9" />
-
-            <TextView
-                android:id="@+id/tvReportDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp"
-                tools:text="Entrada: 09:15" />
-        </LinearLayout>
+        <!-- Detail: Hora de entrada o salida -->
+        <TextView
+            android:id="@+id/tvReportDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_dark_label"
+            android:textSize="13sp"
+            tools:text="Hora Entrada: 09:42 AM" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -32,9 +33,14 @@ import retrofit2.Response;
 
 public class ReportsFragment extends Fragment {
 
+    private enum ReportCategory {
+        LATE, EARLY, ABSENT
+    }
+
     private FragmentReportsBinding binding;
     private ReportsAdapter adapter;
     private Calendar selectedCalendar;
+    private ReportCategory currentCategory = ReportCategory.LATE;
 
     @Nullable
     @Override
@@ -57,9 +63,50 @@ public class ReportsFragment extends Fragment {
 
         binding.btnSelectDate.setOnClickListener(v -> showDatePicker());
 
-        binding.chipGroupReportType.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            loadCurrentReport();
-        });
+        binding.tabLate.setOnClickListener(v -> selectTab(ReportCategory.LATE));
+        binding.tabEarly.setOnClickListener(v -> selectTab(ReportCategory.EARLY));
+        binding.tabAbsent.setOnClickListener(v -> selectTab(ReportCategory.ABSENT));
+
+        selectTab(ReportCategory.LATE);
+    }
+
+    private void selectTab(ReportCategory category) {
+        currentCategory = category;
+        if (binding == null) return;
+
+        int activeBg = ContextCompat.getColor(requireContext(), R.color.white);
+        int inactiveBg = ContextCompat.getColor(requireContext(), android.R.color.transparent);
+        int activeText = ContextCompat.getColor(requireContext(), R.color.primary);
+        int inactiveText = ContextCompat.getColor(requireContext(), R.color.text_dark_label);
+
+        // Reset all tabs
+        binding.tabLate.setBackgroundColor(inactiveBg);
+        binding.tabLate.setTextColor(inactiveText);
+        binding.tabEarly.setBackgroundColor(inactiveBg);
+        binding.tabEarly.setTextColor(inactiveText);
+        binding.tabAbsent.setBackgroundColor(inactiveBg);
+        binding.tabAbsent.setTextColor(inactiveText);
+
+        switch (category) {
+            case LATE:
+                binding.tabLate.setBackgroundColor(activeBg);
+                binding.tabLate.setTextColor(activeText);
+                binding.tvReportSectionTitle.setText("Reporte General de Atrasos");
+                binding.tvReportSectionSubtitle.setText("Umbral: Entradas después de las 09:30 AM");
+                break;
+            case EARLY:
+                binding.tabEarly.setBackgroundColor(activeBg);
+                binding.tabEarly.setTextColor(activeText);
+                binding.tvReportSectionTitle.setText("Reporte General de Salidas Anticipadas");
+                binding.tvReportSectionSubtitle.setText("Umbral: Salidas antes de las 17:30 PM");
+                break;
+            case ABSENT:
+                binding.tabAbsent.setBackgroundColor(activeBg);
+                binding.tabAbsent.setTextColor(activeText);
+                binding.tvReportSectionTitle.setText("Reporte General de Inasistencias");
+                binding.tvReportSectionSubtitle.setText("Sin justificación registrada");
+                break;
+        }
 
         loadCurrentReport();
     }
@@ -97,9 +144,7 @@ public class ReportsFragment extends Fragment {
 
         ApiService api = ApiClient.getService(requireContext());
 
-        int checkedId = binding.chipGroupReportType.getCheckedChipId();
-        if (checkedId == R.id.chipEarly) {
-            // Salidas anticipadas
+        if (currentCategory == ReportCategory.EARLY) {
             api.getEarlyDepartures(dateStr).enqueue(new Callback<List<EarlyDepartureReportDTO>>() {
                 @Override
                 public void onResponse(Call<List<EarlyDepartureReportDTO>> call, Response<List<EarlyDepartureReportDTO>> response) {
@@ -111,8 +156,7 @@ public class ReportsFragment extends Fragment {
                     handleFailure();
                 }
             });
-        } else if (checkedId == R.id.chipAbsent) {
-            // Inasistencias
+        } else if (currentCategory == ReportCategory.ABSENT) {
             api.getAbsenteeism(dateStr).enqueue(new Callback<List<AbsenteeismReportDTO>>() {
                 @Override
                 public void onResponse(Call<List<AbsenteeismReportDTO>> call, Response<List<AbsenteeismReportDTO>> response) {
@@ -125,7 +169,6 @@ public class ReportsFragment extends Fragment {
                 }
             });
         } else {
-            // Llegadas tarde
             api.getLateArrivals(dateStr).enqueue(new Callback<List<LateArrivalReportDTO>>() {
                 @Override
                 public void onResponse(Call<List<LateArrivalReportDTO>> call, Response<List<LateArrivalReportDTO>> response) {
@@ -154,8 +197,8 @@ public class ReportsFragment extends Fragment {
                     items.add(new ReportsAdapter.ReportItem(
                             r.getFullName(),
                             r.getRut(),
-                            "Entrada: " + DateUtils.formatTime(r.getEntry()),
-                            r.getDelay() + " min tarde",
+                            "Hora Entrada: " + DateUtils.formatTime(r.getEntry()),
+                            r.getDelay() + " minutos",
                             type
                     ));
                 } else if (obj instanceof EarlyDepartureReportDTO) {
@@ -163,8 +206,8 @@ public class ReportsFragment extends Fragment {
                     items.add(new ReportsAdapter.ReportItem(
                             r.getFullName(),
                             r.getRut(),
-                            "Salida: " + DateUtils.formatTime(r.getDeparture()),
-                            r.getDelay() + " min antes",
+                            "Hora Salida: " + DateUtils.formatTime(r.getDeparture()),
+                            r.getDelay() + " minutos",
                             type
                     ));
                 } else if (obj instanceof AbsenteeismReportDTO) {

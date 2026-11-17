@@ -17,17 +17,15 @@ import java.util.List;
 public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHolder> {
 
     public enum ReportType {
-        LATE,
-        EARLY,
-        ABSENT
+        LATE, EARLY, ABSENT
     }
 
     public static class ReportItem {
-        public String fullName;
-        public String rut;
-        public String detail;
-        public String badgeText;
-        public ReportType type;
+        private final String fullName;
+        private final String rut;
+        private final String detail;
+        private final String badgeText;
+        private final ReportType type;
 
         public ReportItem(String fullName, String rut, String detail, String badgeText, ReportType type) {
             this.fullName = fullName;
@@ -35,6 +33,26 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
             this.detail = detail;
             this.badgeText = badgeText;
             this.type = type;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public String getRut() {
+            return rut;
+        }
+
+        public String getDetail() {
+            return detail;
+        }
+
+        public String getBadgeText() {
+            return badgeText;
+        }
+
+        public ReportType getType() {
+            return type;
         }
     }
 
@@ -76,20 +94,21 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
 
         void bind(ReportItem item) {
             Context context = binding.getRoot().getContext();
-            binding.tvReportName.setText(item.fullName != null ? item.fullName : "Sin nombre");
-            binding.tvReportRut.setText("RUT: " + (item.rut != null ? item.rut : "--"));
-            binding.tvReportDetail.setText(item.detail);
-            binding.tvReportBadge.setText(item.badgeText);
+            binding.tvReportName.setText(item.getFullName() != null ? item.getFullName() : "Sin nombre");
+            binding.tvReportRut.setText("RUT: " + (item.getRut() != null ? item.getRut() : "--"));
+            binding.tvReportDetail.setText(item.getDetail());
+            binding.tvReportBadge.setText(item.getBadgeText());
 
-            if (item.type == ReportType.LATE) {
-                binding.tvReportBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.status_late_bg));
-                binding.tvReportBadge.setTextColor(ContextCompat.getColor(context, R.color.status_late_text));
-            } else if (item.type == ReportType.EARLY) {
-                binding.tvReportBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.status_early_bg));
-                binding.tvReportBadge.setTextColor(ContextCompat.getColor(context, R.color.status_early_text));
-            } else {
-                binding.tvReportBadge.setBackgroundColor(ContextCompat.getColor(context, R.color.status_absent_bg));
-                binding.tvReportBadge.setTextColor(ContextCompat.getColor(context, R.color.status_absent_text));
+            switch (item.getType()) {
+                case LATE:
+                    binding.tvReportBadge.setTextColor(ContextCompat.getColor(context, R.color.status_late_text));
+                    break;
+                case EARLY:
+                    binding.tvReportBadge.setTextColor(ContextCompat.getColor(context, R.color.status_early_text));
+                    break;
+                case ABSENT:
+                    binding.tvReportBadge.setTextColor(ContextCompat.getColor(context, R.color.status_absent_text));
+                    break;
             }
         }
     }
