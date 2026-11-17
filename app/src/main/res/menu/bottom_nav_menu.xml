@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_assist"
+        android:icon="@drawable/ic_clock"
+        android:title="Asistencia" />
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/ic_dashboard"
+        android:title="Dashboard" />
+    <item
+        android:id="@+id/nav_reports"
+        android:icon="@drawable/ic_chart"
+        android:title="Reportes" />
+    <item
+        android:id="@+id/nav_users"
+        android:icon="@drawable/ic_users"
+        android:title="Usuarios" />
+</menu>
